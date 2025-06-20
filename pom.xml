@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <url>https://github.com/jeap-admin-ch/jeap-server-sent-events/tree/main</url>
+    <scm>
+        <url>https://github.com/jeap-admin-ch/jeap-server-sent-events.git</url>
+        <connection>scm:git:git://github.com/jeap-admin-ch/jeap-server-sent-events.git</connection>
+        <developerConnection>scm:git:ssh://github.com:jeap-admin-ch/jeap-server-sent-events.git</developerConnection>
+    </scm>
+    <developers>
+        <developer>
+            <name>BIT</name>
+            <email>jeap-community@bit.admin.ch</email>
+            <organization>Federal Office of Information Technology, Systems and Telecommunication FOITT</organization>
+            <organizationUrl>https://www.bit.admin.ch/</organizationUrl>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <artifactId>jeap-server-sent-events</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <artifactId>jeap-internal-spring-boot-parent</artifactId>
+        <groupId>ch.admin.bit.jeap</groupId>
+        <version>5.10.2</version>
+    </parent>
+
+    <modules>
+        <module>jeap-server-sent-events-core</module>
+        <module>jeap-server-sent-events-messaging</module>
+        <module>jeap-server-sent-events-web</module>
+        <module>jeap-server-sent-events-starter</module>
+    </modules>
+
+    <properties>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
+        <jeap-messaging.version>8.47.1</jeap-messaging.version>
+        <jeap-starter.version>17.38.0</jeap-starter.version>
+        <commons-io.version>2.19.0</commons-io.version>
+        <commons-beanutils.version>1.11.0</commons-beanutils.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>jeap-server-sent-events-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>jeap-server-sent-events-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>jeap-server-sent-events-messaging</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>jeap-server-sent-events-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.admin.bit.jeap.messagetype.jeap</groupId>
+                <artifactId>notify-client-command</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <!-- This is needed because commons-io 2.11.0  (CVE-2024-47554) is coming with spring-kafka-test 3.3.6 -->
+            <!-- might be fixed with https://jira.bit.admin.ch/browse/JEAP-5650 -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <!-- This is needed because commons-beanutils 1.9.4 (CVE-2025-48734) is coming with spring-kafka-test 3.3.6 -->
+            <!-- might be fixed with https://jira.bit.admin.ch/browse/JEAP-5650 -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <!-- Check third-party license compliance -->
+            <plugin>
+                <groupId>org.honton.chas</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+            </plugin>
+            <!-- Generate third-party license list -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Bundle-License>https://www.apache.org/licenses/LICENSE-2.0</Bundle-License>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <configuration>
+                                <doclint>none</doclint>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
+</project>

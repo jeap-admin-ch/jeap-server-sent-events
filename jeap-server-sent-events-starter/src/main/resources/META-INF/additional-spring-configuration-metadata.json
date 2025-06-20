@@ -1,0 +1,78 @@
+{
+  "properties": [
+    {
+      "name": "jeap.sse.enabled",
+      "description": "Flag to enable/disable the jEAP Server-Sent Events (SSE) support",
+      "defaultValue": true,
+      "type": "java.lang.Boolean"
+    },
+    {
+      "name": "jeap.sse.web.insecure.enabled",
+      "description": "Flag to enable/disable the insecure acces to the jEAP SSE Web Server",
+      "defaultValue": false,
+      "type": "java.lang.Boolean"
+    },
+    {
+      "name": "jeap.sse.web.endpoint",
+      "description": "Endpoint for the jEAP SSE Web Server",
+      "defaultValue": "ui-api/sse/events",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "jeap.sse.web.auth.role",
+      "description": "Role required to access the jEAP SSE Web Server if set, for simple authentication",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "jeap.sse.web.auth.resource",
+      "description": "Resource required to access the jEAP SSE Web Server if set, for semantic authentication",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "jeap.sse.web.auth.operation",
+      "description": "Operation required to access the jEAP SSE Web Server if set, for semantic authentication",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "jeap.sse.web.heartbeat.rateInMs",
+      "description": "Rate in milliseconds for the heartbeat messages sent by the jEAP SSE Web Server",
+      "defaultValue": 5000,
+      "type": "java.lang.Integer"
+    },
+    {
+      "name": "jeap.sse.web.emitter.timeoutInMs",
+      "description": "Timeout in milliseconds for the jEAP SSE Web Server emitter",
+      "defaultValue": 30000,
+      "type": "java.lang.Integer"
+    },
+    {
+      "name": "jeap.sse.kafka.topic",
+      "description": "Kafka topic to which the jEAP SSE Web Server will subscribe and publish, should be system-applicationname-notifyclient",
+      "type": "java.lang.String"
+    }
+  ],
+  "hints": [
+    {
+      "name": "jeap.sse.enabled",
+      "values": [
+        {
+          "value": true
+        },
+        {
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "jeap.sse.web.insecure.enabled",
+      "values": [
+        {
+          "value": true
+        },
+        {
+          "value": false
+        }
+      ]
+    }
+  ]
+}
