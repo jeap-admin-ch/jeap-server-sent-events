@@ -1,0 +1,21 @@
+server:
+  port: 8089
+
+jeap:
+  sse:
+    web:
+      auth:
+        role: authentication:read
+  security:
+    oauth2:
+      resourceserver:
+        authorization-server:
+          issuer: "http://localhost/auth"
+          jwk-set-uri: "http://localhost:${server.port}/${spring.application.name}/.well-known/jwks.json"
+        system-name: "test-system"
+        log:
+          authentication-failure:
+            enabled: true
+          access-denied:
+            enabled: true
+            debug: true

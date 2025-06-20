@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: testapp
+  main:
+    banner-mode: off
+server:
+  servlet:
+    context-path: /${spring.application.name}
+
+jeap:
+  sse:
+    kafka:
+      topic: jeap-testapp-notifyclient
+    web:
+      heartbeat:
+        rateInMs: 30000
+    enabled: true

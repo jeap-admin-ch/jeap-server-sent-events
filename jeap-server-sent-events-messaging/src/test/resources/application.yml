@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: testapp
+  main:
+    banner-mode: off
+
+jeap:
+  sse:
+    kafka:
+      topic: jeap-testapp-notifyclient
+    web:
+      heartbeat:
+        rate-in-ms: 20000
