@@ -76,7 +76,7 @@ Apache License Version 2.0
  * scala-logging - [com.typesafe.scala-logging:scala-logging_2.13](https://github.com/lightbend/scala-logging)
  * JSON library from Android SDK - [com.vaadin.external.google:android-json](http://developer.android.com/sdk)
  * Metrics Core Library - [com.yammer.metrics:metrics-core](http://metrics.codahale.com/metrics-core/)
- * Apache Commons BeanUtils - [commons-beanutils:commons-beanutils](https://commons.apache.org/proper/commons-beanutils)
+ * Apache Commons BeanUtils - [commons-beanutils:commons-beanutils](https://commons.apache.org/proper/commons-beanutils/)
  * Apache Commons CLI - [commons-cli:commons-cli](http://commons.apache.org/proper/commons-cli/)
  * Apache Commons Codec - [commons-codec:commons-codec](https://commons.apache.org/proper/commons-codec/)
  * Apache Commons Collections - [commons-collections:commons-collections](http://commons.apache.org/collections/)
