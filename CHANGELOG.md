@@ -20,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - update guava-testlib from 31.1-jre to 33.4.8-jre
 - update schema-registry-serde from 1.1.23 to 1.1.24
 - update avro-serializer from 7.9.0 to 7.9.2
+- Removed tomcat-embed-core as managed dependency
 
 ## [1.1.1] - 2025-06-30
 ### Changed
