@@ -11,7 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - update jeap-crypto from 3.24.1 to 3.24.2
 - update jeap-spring-boot-vault-starter from 17.39.1 to 17.39.2
 - ServletRequestSecurityTracer now properly handles non-REST requests (e.g., SOAP) by falling back to the request URI when the REST HandlerMapping pattern is not available.
-
+- switch from deprecated org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration to org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientAutoConfiguration
+- update jeap-starter from 17.39.2 to 17.39.3
 
 ## [1.2.3] - 2025-07-09
 ### Changed
