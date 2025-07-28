@@ -42,7 +42,7 @@
     {
       "name": "jeap.sse.web.emitter.timeoutInMs",
       "description": "Timeout in milliseconds for the jEAP SSE Web Server emitter",
-      "defaultValue": 30000,
+      "defaultValue": 600000,
       "type": "java.lang.Integer"
     },
     {
