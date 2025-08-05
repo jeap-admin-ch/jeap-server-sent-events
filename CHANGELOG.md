@@ -8,8 +8,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.4.0] - 2025-08-05
 
 ### Changed
-
 - Update parent from 5.11.0 to 5.12.0
+- updated springdoc-openapi from 2.8.6 to 2.8.9
+- updated wiremock from 3.12.1 to 3.13.1
+- update jeap-starter from 17.39.3 to 17.40.0
+- updated logstash from 8.0 to 8.1
 
 ## [1.3.2] - 2025-07-30
 ### Changed
