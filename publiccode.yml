@@ -14,11 +14,26 @@ softwareType: library
 description:
   en:
     localisedName: jeap-server-sent-events
-    shortDescription: TODO (Max. 150 characters)
+    shortDescription: Library for Server-Sent Events in jEAP applications, using SSE and Kafka
     longDescription: >
-      TODO (Min. 150 characters)
+      The jEAP Server-Sent Events (SSE) library enables real-time, server-to-client
+      event streaming over HTTP using the SSE standard. It provides a configurable
+      web endpoint where UI clients can subscribe to receive events such as resource
+      creation, updates, deletions, and periodic heartbeat signals. Multiple backend
+      instances are synchronized via Kafka to ensure all connected clients receive all
+      relevant events, regardless of which instance initiated the change. The library
+      offers flexible authentication options, including insecure, simple role-based,
+      and semantic resource/operation-based access control. It exposes a simple
+      business logic API (`ResourceMutationService`) for publishing events and handles
+      dispatch to all listeners automatically. With configurable heartbeat rates,
+      emitter timeouts, and Kafka topics, it supports scalable, efficient, and secure
+      integration of real-time updates into jEAP-based microservices and UI applications.
     features:
-      - TODO
+      - Providing real-time data change updates to web frontends using Server-Sent Events (SSE)
+      - Synchronizing multiple backend instances via Kafka to ensure consistent event delivery
+      - Configurable authentication options for secure access control
+      - Simple API for publishing resource change events
+      - Flexible configuration for heartbeat rates, emitter timeouts, and Kafka topics
 legal:
   license: Apache-2.0
 maintenance:
