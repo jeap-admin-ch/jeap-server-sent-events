@@ -11,7 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotifyClientContractsValidator {
 
-    private static final AvroMessageType NOTIFY_CLIENT_COMMAND = new AvroMessageType(NotifyClientCommand.getClassSchema().getName(), NotifyClientCommand.MESSAGE_TYPE_VERSION$);
+    private static final AvroMessageType NOTIFY_CLIENT_COMMAND = AvroMessageType.newBuilder()
+            .setName(NotifyClientCommand.getClassSchema().getName())
+            .setVersion(NotifyClientCommand.MESSAGE_TYPE_VERSION$)
+            .build();
 
     private final ContractsValidator contractsValidator;
     private final String topicName;
