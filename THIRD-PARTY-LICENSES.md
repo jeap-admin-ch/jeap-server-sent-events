@@ -25,6 +25,7 @@ Apache License Version 2.0
  * ch.admin.bit.jeap:jeap-server-sent-events-messaging - [ch.admin.bit.jeap:jeap-server-sent-events-messaging](https://github.com/jeap-admin-ch/jeap-server-sent-events/tree/main/jeap-server-sent-events-messaging)
  * ch.admin.bit.jeap:jeap-server-sent-events-web - [ch.admin.bit.jeap:jeap-server-sent-events-web](https://github.com/jeap-admin-ch/jeap-server-sent-events/tree/main/jeap-server-sent-events-web)
  * ch.admin.bit.jeap:jeap-spring-boot-roles-anywhere-starter - [ch.admin.bit.jeap:jeap-spring-boot-roles-anywhere-starter](https://github.com/jeap-admin-ch/jeap-spring-boot-roles-anywhere-starter/tree/main/jeap-spring-boot-roles-anywhere-starter)
+ * ch.admin.bit.jeap:jeap-spring-boot-security-client-starter - [ch.admin.bit.jeap:jeap-spring-boot-security-client-starter](https://github.com/jeap-admin-ch/jeap-spring-boot-starters/tree/main/jeap-spring-boot-security-client-starter)
  * ch.admin.bit.jeap:jeap-spring-boot-security-starter - [ch.admin.bit.jeap:jeap-spring-boot-security-starter](https://github.com/jeap-admin-ch/jeap-spring-boot-starters/tree/main/jeap-spring-boot-security-starter)
  * ch.admin.bit.jeap:jeap-spring-boot-security-starter-test - [ch.admin.bit.jeap:jeap-spring-boot-security-starter-test](https://github.com/jeap-admin-ch/jeap-spring-boot-starters/tree/main/jeap-spring-boot-security-starter-test)
  * ch.admin.bit.jeap.messagetype.jeap:notify-client-command - [ch.admin.bit.jeap.messagetype.jeap:notify-client-command](https://github.com/jeap-admin-ch/jeap-message-type-registry/tree/main)
