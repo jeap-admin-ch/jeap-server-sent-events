@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2025-09-02
+### Changed
+- update jeap-messaging from 8.56.1 to 8.57.1
+- The GenericRecordDataDeserializer is now only available without signature check, which is now also removed from props
+
+
 ## [1.7.0] - 2025-09-01
 ### Changed
 - update jeap-starter from 17.42.0 to 17.43.0
