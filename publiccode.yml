@@ -2,7 +2,7 @@ publiccodeYmlVersion: 0.4.0
 name: jeap-server-sent-events
 applicationSuite: jEAP
 softwareVersion: 3.3.0
-releaseDate: 2025-10-02
+releaseDate: 2025-10-03
 url: "https://github.com/jeap-admin-ch/jeap-server-sent-events.git"
 landingURL: "https://github.com/jeap-admin-ch/jeap"
 platforms:
