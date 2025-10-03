@@ -9,13 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 - Update parent from 5.14.0 to 5.15.0
-- updated springdoc-openapi from 2.8.9 to 2.8.13
-- update jeap-starter from 18.1.0 to 18.2.0
-- updated java-cfenv from 3.4.0 to 3.5.0
-- update maven.api from 3.9.10 to 3.9.11
-- update protobuf-java from 4.31.1 to 4.32.1
 - update jeap-messaging from 9.2.0 to 9.3.0
-- update schema-registry-serde from 1.1.24 to 1.1.25
+- update commons-io from 2.19.0 to 2.20.0
 
 ## [3.2.0] - 2025-09-26
 ### Changed
