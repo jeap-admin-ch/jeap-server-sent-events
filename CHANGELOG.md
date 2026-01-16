@@ -10,6 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Enable via the `jeap.health.metric.contributor-metrics.enabled` property.
 - update jeap-starter from 19.9.0 to 19.10.0
 - Added support for exposing additional metrics about application health contributors.
+- AvroMessageBuilder now validates the presence of the `variant` field in the message type before setting it, throwing an exception if it is undefined.
+- update jeap-messaging from 11.8.1 to 11.9.0
 
 ## [6.8.0] - 2026-01-14
 
