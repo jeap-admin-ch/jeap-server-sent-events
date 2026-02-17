@@ -1,4 +1,4 @@
-publiccodeYmlVersion: 0.4.0
+publiccodeYmlVersion: 0.5.0
 name: jeap-server-sent-events
 applicationSuite: jEAP
 softwareVersion: 6.15.0
@@ -17,7 +17,7 @@ organisation:
 description:
   en:
     localisedName: jeap-server-sent-events
-    shortDescription: Library for Server-Sent Events in jEAP applications, using SSE and Kafka
+    shortDescription: This library provides a way to send real-time events from the server to the client using Server-Sent Events (SSE).
     longDescription: >
       The jEAP Server-Sent Events (SSE) library enables real-time, server-to-client
       event streaming over HTTP using the SSE standard. It provides a configurable
