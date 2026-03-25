@@ -10,7 +10,12 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 class NotifyClientControllerTest {
@@ -32,6 +37,11 @@ class NotifyClientControllerTest {
     }
 
     @Test
+    void sendEvent_noEmitters_doesNothing() {
+        assertDoesNotThrow(() -> controller.sendEvent("test", "data"));
+    }
+
+    @Test
     void testStreamEvents() throws IOException {
         SseEmitter sseEmitter = controller.streamEvents();
         String name = "gugu";
@@ -42,11 +52,76 @@ class NotifyClientControllerTest {
         controller.sendEvent(name, data);
 
         verify(sseEmitter).send(captor.capture());
-
         Set<ResponseBodyEmitter.DataWithMediaType> capturedData = captor.getValue();
-//        assertTrue(capturedData.size() == 1, "Captured data size should be 1");
-//        ResponseBodyEmitter.DataWithMediaType dataWithMediaType = capturedData.iterator().next();
-//        System.out.println(dataWithMediaType);
+        assertEquals(3, capturedData.size());
     }
 
+    @Test
+    void sendEvent_whenIOException_removesEmitter() throws Exception {
+        SseEmitter emitter = mock(SseEmitter.class);
+
+        controller = new NotifyClientController(TIMEOUT, Optional.empty()) {
+            @Override
+            SseEmitter createEmitter(long emitterTimeout) {
+                return emitter;
+            }
+        };
+
+        controller.streamEvents();
+
+        // simulate failure
+        doThrow(new IOException("boom")).when(emitter).send(any(Set.class));
+
+        controller.sendEvent("test", "data");
+
+        verify(emitter).complete(); // important!
+    }
+
+    @Test
+    void streamEvents_onCompletion_removesEmitter() throws IOException {
+        SseEmitter emitter = mock(SseEmitter.class);
+
+        ArgumentCaptor<Runnable> completionCaptor = ArgumentCaptor.forClass(Runnable.class);
+
+        controller = new NotifyClientController(TIMEOUT, Optional.empty()) {
+            @Override
+            SseEmitter createEmitter(long emitterTimeout) {
+                return emitter;
+            }
+        };
+
+        controller.streamEvents();
+
+        verify(emitter).onCompletion(completionCaptor.capture());
+
+        // simulate completion
+        completionCaptor.getValue().run();
+
+        // now send event → should NOT call emitter.send()
+        controller.sendEvent("test", "data");
+
+        verify(emitter, never()).send(any(Object.class));
+    }
+
+    @Test
+    void streamEvents_onTimeout_removesEmitter() throws IOException {
+        SseEmitter emitter = mock(SseEmitter.class);
+        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
+
+        controller = new NotifyClientController(TIMEOUT, Optional.empty()) {
+            @Override
+            SseEmitter createEmitter(long emitterTimeout) {
+                return emitter;
+            }
+        };
+
+        controller.streamEvents();
+
+        verify(emitter).onTimeout(captor.capture());
+        captor.getValue().run();
+
+        controller.sendEvent("test", "data");
+
+        verify(emitter, never()).send(any(Object.class));
+    }
 }

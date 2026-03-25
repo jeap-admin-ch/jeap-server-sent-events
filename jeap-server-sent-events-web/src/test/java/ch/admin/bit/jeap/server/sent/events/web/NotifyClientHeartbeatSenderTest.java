@@ -7,8 +7,10 @@ import org.mockito.ArgumentCaptor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -40,6 +42,20 @@ class NotifyClientHeartbeatSenderTest {
 
         verify(notifyClientController).sendEvent("HEARTBEAT", "{ \"interval\": " + INTERVAL_IN_MS + " }");
     }
+
+    @Test
+    void sendHeartbeatsWithException_doNotPropagate() {
+        doThrow(new RuntimeException("Test exception")).when(notifyClientController).sendEvent(any(String.class), any(String.class));
+
+
+        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
+        notifyClientHeartbeatSender.init();
+
+        verify(scheduledExecutorService).scheduleAtFixedRate(captor.capture(), eq(INTERVAL_IN_MS), eq(INTERVAL_IN_MS), eq(TimeUnit.MILLISECONDS));
+        Runnable runnable = captor.getValue();
+        assertDoesNotThrow(runnable::run);
+    }
+
 
     @Test
     void init() {

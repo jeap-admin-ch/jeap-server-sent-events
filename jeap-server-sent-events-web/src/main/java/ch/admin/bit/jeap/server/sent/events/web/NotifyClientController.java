@@ -35,22 +35,37 @@ public class NotifyClientController {
     public SseEmitter streamEvents() {
         authorization.ifPresent(NotifyClienAuthorization::check);
 
-        log.trace("creating new SseEmitter");
+        log.trace("Creating new SseEmitter with timeout {} ms", emitterTimeoutInMs);
         SseEmitter emitter = createEmitter(emitterTimeoutInMs);
 
         // Add the emitter to the list of active emitters
         emitters.add(emitter);
+        log.trace("SseEmitter added, active emitter count: {}", emitters.size());
 
         // Remove the emitter when it completes (successfully or with error)
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onTimeout(() -> emitters.remove(emitter));
-        emitter.onError(ex -> emitters.remove(emitter));
+        emitter.onCompletion(() -> {
+            emitters.remove(emitter);
+            log.trace("SseEmitter completed and removed, active emitter count: {}", emitters.size());
+        });
+        emitter.onTimeout(() -> {
+            emitters.remove(emitter);
+            log.trace("SseEmitter timed out and removed, active emitter count: {}", emitters.size());
+        });
+        emitter.onError(ex -> {
+            emitters.remove(emitter);
+            log.trace("SseEmitter error and removed ({}), active emitter count: {}", ex.getMessage(), emitters.size());
+        });
 
         return emitter;
     }
 
     void sendEvent(String name, String data) {
-        log.trace("Sending event '{}' with data '{}'", name, data);
+        int emitterCount = emitters.size();
+        log.trace("Sending event '{}' to {} emitter(s), data: '{}'", name, emitterCount, data);
+        if (emitterCount == 0) {
+            log.trace("No active emitters, skipping event '{}'", name);
+            return;
+        }
         for (ResponseBodyEmitter emitter : new ArrayList<>(emitters)) {
             try {
                 emitter.send(SseEmitter.event()
@@ -59,8 +74,9 @@ public class NotifyClientController {
                         .id(UUID.randomUUID().toString())
                         .build()
                 );
+                log.trace("Event '{}' sent successfully", name);
             } catch (IOException e) {
-                log.warn("Exception while sending to client, removing emitter", e);
+                log.warn("Exception while sending event '{}' to client, removing emitter", name, e);
                 emitter.complete();
                 emitters.remove(emitter);
             }

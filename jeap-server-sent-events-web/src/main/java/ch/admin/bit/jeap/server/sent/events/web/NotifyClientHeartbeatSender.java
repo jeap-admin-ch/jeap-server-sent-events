@@ -19,18 +19,24 @@ public class NotifyClientHeartbeatSender {
     private final ScheduledExecutorService heartbeatScheduler;
     private final long rateInMs;
 
-    public NotifyClientHeartbeatSender(NotifyClientController notifyClientController, long intervalInSeconds) {
-        this(notifyClientController, Executors.newSingleThreadScheduledExecutor(), intervalInSeconds);
+    public NotifyClientHeartbeatSender(NotifyClientController notifyClientController, long rateInMs) {
+        this(notifyClientController, Executors.newSingleThreadScheduledExecutor(), rateInMs);
     }
 
     @PostConstruct
     public void init() {
+        log.info("Scheduling heartbeat with interval {} ms", rateInMs);
         heartbeatScheduler.scheduleAtFixedRate(this::sendHeartbeats, rateInMs, rateInMs, TimeUnit.MILLISECONDS);
     }
 
 
     private void sendHeartbeats() {
-        notifyClientController.sendEvent(HEARTBEAT_EVENT, HEARTBEAT_EVENT_DATA_TEMPLATE.formatted(rateInMs));
+        log.trace("Sending heartbeat");
+        try {
+            notifyClientController.sendEvent(HEARTBEAT_EVENT, HEARTBEAT_EVENT_DATA_TEMPLATE.formatted(rateInMs));
+        } catch (Exception e) {
+            log.warn("Exception while sending heartbeat", e);
+        }
     }
 
     @PreDestroy
