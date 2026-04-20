@@ -8,7 +8,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [8.5.0] - 2026-04-20
 ### Changed
 - update jeap-starter from 21.3.0 to 21.4.0
-- Update parent from 6.0.3 to 7.0.0-alpha-springboot4
 
 ## [8.4.0] - 2026-04-16
 
