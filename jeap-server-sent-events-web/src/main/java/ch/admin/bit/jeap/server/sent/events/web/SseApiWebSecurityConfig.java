@@ -18,14 +18,12 @@ public class SseApiWebSecurityConfig {
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE + 100)
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http,
-                                                      @Value("${jeap.sse.web.endpoint}") String webEndpoint) throws Exception {
+    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http, @Value("${jeap.sse.web.endpoint}") String webEndpoint) {
         http.securityMatcher(webEndpoint)
                 .authorizeHttpRequests(authz -> authz
                         .anyRequest().permitAll()
                 )
                 .cors(Customizer.withDefaults());
-
 
         return http.build();
     }

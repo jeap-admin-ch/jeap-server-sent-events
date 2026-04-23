@@ -1,9 +1,9 @@
 package ch.admin.bit.jeap.server.sent.events.web;
 
 import ch.admin.bit.jeap.server.sent.events.domain.ResourceMutationType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -16,9 +16,9 @@ class NotifyClientResourceMutationDataSenderTest {
 
     @BeforeEach
     void setUp() {
-        ObjectMapper objectMapper = new ObjectMapper();
+        JsonMapper jsonMapper = JsonMapper.builder().build();
         notifyClientController = mock(NotifyClientController.class);
-        notifyClientResourceMutationDataSender = new NotifyClientResourceMutationDataSender(notifyClientController, objectMapper);
+        notifyClientResourceMutationDataSender = new NotifyClientResourceMutationDataSender(notifyClientController, jsonMapper);
     }
 
     @Test

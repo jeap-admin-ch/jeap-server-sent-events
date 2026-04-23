@@ -3,12 +3,12 @@ package ch.admin.bit.jeap.server.sent.events.web.spring;
 import ch.admin.bit.jeap.security.resource.authentication.ServletSimpleAuthorization;
 import ch.admin.bit.jeap.security.resource.semanticAuthentication.ServletSemanticAuthorization;
 import ch.admin.bit.jeap.server.sent.events.web.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class ServerSentEventsWebAutoConfiguration {
 
     @Bean
-    public NotifyClientResourceMutationDataSender notifyClientResourceMutationDataSender(NotifyClientController notifyClientController, ObjectMapper objectMapper) {
+    public NotifyClientResourceMutationDataSender notifyClientResourceMutationDataSender(NotifyClientController notifyClientController, JsonMapper objectMapper) {
         return new NotifyClientResourceMutationDataSender(notifyClientController, objectMapper);
     }
 

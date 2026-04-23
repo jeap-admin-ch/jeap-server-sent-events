@@ -15,7 +15,7 @@
     {
       "name": "jeap.sse.web.endpoint",
       "description": "Endpoint for the jEAP SSE Web Server",
-      "defaultValue": "ui-api/sse/events",
+      "defaultValue": "/ui-api/sse/events",
       "type": "java.lang.String"
     },
     {
