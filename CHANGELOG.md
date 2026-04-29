@@ -12,6 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
   - fixed version in publiccode.html
 - update jeap-starter from 22.2.0-alpha-springboot4 to 22.3.1-alpha-springboot4
+- Fixed Sonar findings.
+- update jeap-messaging from 14.2.0-alpha-springboot4 to 14.3.1-alpha-springboot4
 
 ## [9.2.0-alpha-springboot4] - 2026-04-24
 
