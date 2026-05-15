@@ -15,6 +15,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - update jeap-starter from 22.5.0-alpha-springboot4 to 22.5.1-alpha-springboot4
 - Custom subclass of `ShallowEtagFilter` called `SseAwareEtagHeaderFilter`
 - Set `SseAwareEtagHeaderFilter` as default bean for the ShallowEtagFilter. 
+- added second argument to TraceBridge.getSpan to allow to pass in the spanName and have more meaningful traces
+- update jeap-messaging from 14.7.0-alpha-springboot4 to 14.8.0-alpha-springboot4
 
 ## [9.7.0-alpha-springboot4] - 2026-05-07
 ### Changed
