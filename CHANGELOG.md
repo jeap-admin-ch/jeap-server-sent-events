@@ -10,8 +10,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [10.6.0] - 2026-06-12
 
 ### Changed
-
 - Update parent from 8.1.0 to 8.2.0
+- Remove logstash version because it is managed by the internal parent now
+- update jeap-starter from 23.4.0 to 23.5.0
 
 ## [10.5.0] - 2026-06-11
 ### Changed
