@@ -1,12 +1,9 @@
 package ch.admin.bit.jeap.server.sent.events;
 
 import ch.admin.bit.jeap.messaging.kafka.test.KafkaIntegrationTestBase;
-import ch.admin.bit.jeap.server.sent.events.domain.ResourceMutationService;
-import ch.admin.bit.jeap.server.sent.events.domain.ResourceMutationType;
 import ch.admin.bit.jeap.server.sent.events.messaging.NotifyClientTopicValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;

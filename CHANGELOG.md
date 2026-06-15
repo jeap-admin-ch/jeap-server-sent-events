@@ -7,9 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 > - Spring Boot 3 maintenance (bug fixes, patches, and regular updates) continues on branch `release/springboot3`.
 
+## [10.6.1] - 2026-06-15
+
+### Fixed
+
+- Updated deprecated spring-boot-starter-web to spring-boot-starter-webmvc.
+- Test code quality cleanup for Sonar: removed unused imports/field, resolved local variable shadowing, and replaced `StringBuilder` emptiness checks with `isEmpty()`.
+
 ## [10.6.0] - 2026-06-12
 
-### Changed
+### Changed 
 - Update parent from 8.1.0 to 8.2.0
 - Remove logstash version because it is managed by the internal parent now
 - update jeap-starter from 23.4.0 to 23.5.0

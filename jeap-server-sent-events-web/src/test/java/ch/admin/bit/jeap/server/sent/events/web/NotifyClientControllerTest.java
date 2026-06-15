@@ -22,8 +22,6 @@ class NotifyClientControllerTest {
 
     private static final long TIMEOUT = 33L;
 
-    private SseEmitter sseEmitter;
-
     private NotifyClientController controller;
 
     @BeforeEach
@@ -43,7 +41,7 @@ class NotifyClientControllerTest {
 
     @Test
     void testStreamEvents() throws IOException {
-        SseEmitter sseEmitter = controller.streamEvents();
+        SseEmitter emitter = controller.streamEvents();
         String name = "gugu";
         String data = "{ \"path\": \"/test/resource\" }";
 
@@ -51,7 +49,7 @@ class NotifyClientControllerTest {
 
         controller.sendEvent(name, data);
 
-        verify(sseEmitter).send(captor.capture());
+        verify(emitter).send(captor.capture());
         Set<ResponseBodyEmitter.DataWithMediaType> capturedData = captor.getValue();
         assertEquals(3, capturedData.size());
     }

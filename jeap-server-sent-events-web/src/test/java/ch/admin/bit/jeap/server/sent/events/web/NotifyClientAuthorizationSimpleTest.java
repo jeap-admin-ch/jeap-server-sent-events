@@ -1,7 +1,6 @@
 package ch.admin.bit.jeap.server.sent.events.web;
 
 import ch.admin.bit.jeap.security.resource.authentication.ServletSimpleAuthorization;
-import ch.admin.bit.jeap.security.resource.semanticAuthentication.ServletSemanticAuthorization;
 import ch.admin.bit.jeap.security.resource.token.JeapAuthenticationToken;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

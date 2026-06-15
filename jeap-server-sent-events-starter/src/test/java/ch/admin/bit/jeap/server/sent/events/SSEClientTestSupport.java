@@ -72,7 +72,7 @@ public class SSEClientTestSupport {
                             currentEventType = line.substring(6).trim();
                         } else if (line.startsWith("data:")) {
                             dataBuffer.append(line.substring(5).trim());
-                        } else if (line.isEmpty() && dataBuffer.length() > 0) {
+                        } else if (line.isEmpty() && !dataBuffer.isEmpty()) {
                             // End of SSE block
                             if (currentEventType != null) {
                                 receivedEventTypes.add(currentEventType);
