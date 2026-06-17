@@ -10,8 +10,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [10.7.0] - 2026-06-17
 
 ### Changed
-
 - Update parent from 8.2.0 to 8.3.0
+- Deprecated spring boot starter
+- Sonar issues
+- update jeap-starter from 23.5.0 to 23.5.2
 
 ## [10.6.1] - 2026-06-15
 
