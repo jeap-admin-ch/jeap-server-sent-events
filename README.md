@@ -1,22 +1,41 @@
-# jEAP server sent events
+# jEAP Server-Sent Events
 
-jEAP server sent events is a library that provides a way to send real-time events from the server to the client using
-Server-Sent Events (SSE). It allows for efficient and scalable communication between the server and the client, enabling    
-real-time updates and notifications.
+jEAP Server-Sent Events is a library for pushing real-time events from a jEAP Spring Boot service to
+browser clients over the Server-Sent Events (SSE / `EventSource`) HTTP standard. A service reports
+resource changes through a simple business API, and connected UI clients receive a typed event stream
+without polling. Multiple backend instances stay in sync through a Kafka topic, so every connected
+client receives every relevant event regardless of which instance triggered the change. It provides:
 
-## Properties
+* A `text/event-stream` web endpoint that UI clients subscribe to with the native `EventSource` API
+* A business-facing `ResourceMutationService` to publish create / update / delete events
+* Kafka fan-out so all backend instances forward events to their own connected clients
+* Periodic heartbeats and configurable emitter timeouts to keep connections healthy
+* Pluggable authorization: insecure, simple role-based, or semantic resource/operation-based
+* Spring Boot auto-configuration enabled by default, switchable via `jeap.sse.enabled`
 
-| Name                             | Remarks                                                                                                                | Default           | Mandatory         |
-|----------------------------------|------------------------------------------------------------------------------------------------------------------------|-------------------|-------------------|
-| jeap.sse.kafka.topic             | Kafka topic to which the jEAP SSE Web Server will subscribe and publish, should be system-applicationname-notifyclient | -                 | yes               |
-| jeap.sse.enabled                 | Flag to enable/disable the jEAP Server-Sent Events (SSE) support                                                       | true              | no                |
-| jeap.sse.web.insecure.enabled    | Flag to enable/disable insecure access to sse endpoint                                                                 | false             | no                |
-| jeap.sse.web.endpoint            | Endpoint for the jEAP SSE Web Server                                                                                   | ui-api/sse/events | no                |
-| jeap.sse.web.auth.role           | Role required to access the jEAP SSE Web Server if set, for simple authentication                                      | -                 | no                |
-| jeap.sse.web.auth.resource       | Resource required to access the jEAP SSE Web Server if set, for semantic authentication                                | -                 | no                |
-| jeap.sse.web.auth.operation      | Operation required to access the jEAP SSE Web Server if set, for semantic authentication                               | -                 | no                |
-| jeap.sse.web.heartbeat.rateInMs  | Rate in milliseconds for the heartbeat messages sent by the jEAP SSE Web Server                                        | 5000              | no                |
-| jeap.sse.web.emitter.timeoutInMs | Timeout in milliseconds for the jEAP SSE Web Server emitter                                                            | 30000             | no                |
+## Documentation
+
+Start with [Getting started](docs/getting-started.md), then follow the links below.
+
+| Topic                                              | File                                                         |
+|----------------------------------------------------|--------------------------------------------------------------|
+| Getting started (add the dependency, push events)  | [docs/getting-started.md](docs/getting-started.md)           |
+| Architecture & event flow                          | [docs/architecture.md](docs/architecture.md)                 |
+| Configuration reference (`jeap.sse.*`)             | [docs/configuration.md](docs/configuration.md)               |
+| Authorization (insecure / simple / semantic)       | [docs/authorization.md](docs/authorization.md)               |
+| Client integration (`EventSource`)                 | [docs/client-integration.md](docs/client-integration.md)     |
+
+## Modules
+
+The artifact most consumers depend on is `jeap-server-sent-events-starter`. The group id for all
+modules is `ch.admin.bit.jeap`; the version is managed by this library's parent POM.
+
+| Module                            | Purpose                                                                                  |
+|-----------------------------------|------------------------------------------------------------------------------------------|
+| `jeap-server-sent-events-core`    | Domain API: `ResourceMutationService`, `ResourceMutationType`, listener interfaces       |
+| `jeap-server-sent-events-web`     | SSE web endpoint, heartbeat sender, authorization and Spring Security config             |
+| `jeap-server-sent-events-messaging` | Kafka producer/consumer of `NotifyClientCommand` for cross-instance fan-out            |
+| `jeap-server-sent-events-starter` | Aggregates `web` + `messaging` and the auto-configuration; the consumer-facing artifact  |
 
 ## Changes
 
