@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [10.13.1] - 2026-07-01
+### Changed
+- update jeap-starter from 23.10.0 to 23.10.1
+- Add missing `test` scope to test/mock dependencies (`spring-boot-webmvc-test` in swagger starter, `wiremock-standalone` in security starter)
+
 ## [10.13.0] - 2026-06-30
 
 ### Changed
