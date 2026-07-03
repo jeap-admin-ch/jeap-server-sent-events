@@ -8,12 +8,12 @@ drops.
 
 The server emits these named events on the stream:
 
-| Event name         | Payload                | Meaning                                            |
-|--------------------|------------------------|----------------------------------------------------|
-| `RESOURCE_CREATED` | `{"path": "<ref>"}`    | A resource was created                             |
-| `RESOURCE_UPDATED` | `{"path": "<ref>"}`    | A resource was updated                             |
-| `RESOURCE_DELETED` | `{"path": "<ref>"}`    | A resource was deleted                             |
-| `HEARTBEAT`        | `{"interval": <ms>}`   | Keep-alive sent every `jeap.sse.web.heartbeat.rateInMs` |
+| Event name         | Payload              | Meaning                                                 |
+|--------------------|----------------------|---------------------------------------------------------|
+| `RESOURCE_CREATED` | `{"path": "<ref>"}`  | A resource was created                                  |
+| `RESOURCE_UPDATED` | `{"path": "<ref>"}`  | A resource was updated                                  |
+| `RESOURCE_DELETED` | `{"path": "<ref>"}`  | A resource was deleted                                  |
+| `HEARTBEAT`        | `{"interval": <ms>}` | Keep-alive sent every `jeap.sse.web.heartbeat.rateInMs` |
 
 Each event also carries a random `id`. The `path` is a reference, not the resource data: the client
 should fetch the current state with a normal REST call. This keeps the SSE contract minimal and

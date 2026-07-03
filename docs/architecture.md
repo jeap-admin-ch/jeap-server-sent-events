@@ -7,12 +7,12 @@ change through a Kafka topic so all instances forward it to their own connected 
 
 ## Modules and responsibilities
 
-| Module      | Key types                                                                                            |
-|-------------|-------------------------------------------------------------------------------------------------------|
-| `core`      | `ResourceMutationService`, `ResourceMutationType`, `ResourceMutationEventHandler`, listener interfaces |
-| `messaging` | `NotifyClientCommandProducer`, `NotifyClientCommandConsumer`, contract & topic validators              |
+| Module      | Key types                                                                                                                       |
+|-------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `core`      | `ResourceMutationService`, `ResourceMutationType`, `ResourceMutationEventHandler`, listener interfaces                          |
+| `messaging` | `NotifyClientCommandProducer`, `NotifyClientCommandConsumer`, contract & topic validators                                       |
 | `web`       | `NotifyClientController` (SSE endpoint), `NotifyClientResourceMutationDataSender`, `NotifyClientHeartbeatSender`, authorization |
-| `starter`   | Aggregates the above plus `ServerSentEventsAutoConfiguration`                                          |
+| `starter`   | Aggregates the above plus `ServerSentEventsAutoConfiguration`                                                                   |
 
 ## Event flow
 
@@ -47,6 +47,74 @@ Step by step:
 5. **Push.** `NotifyClientResourceMutationDataSender` (a `ResourceMutationEventListener`) serializes
    `{"path": resourcePath}` to JSON and calls `NotifyClientController.sendEvent(type, data)`, which
    writes the event to every active `SseEmitter`.
+
+## Multi-instance support
+
+A service usually runs as several instances behind a load balancer. Each browser client holds its
+`EventSource` connection to exactly one of them, while the mutation it should be notified about may
+be processed on any other. The diagram below shows how the Kafka topic bridges this gap: UI 1 is
+connected to instance 1, UI 2 to instance 2, and a resource deletion handled by instance 2 still
+reaches both clients.
+
+Every instance subscribes to the topic with its **own consumer group** (the listener id is
+`${spring.application.name}-${random.uuid}`), so the `NotifyClientCommand` is not load-balanced
+across instances but delivered to *all* of them. Each instance then forwards the event to the
+clients connected to it — no instance needs to know where the other clients are attached. Because
+the consumer group id is regenerated on every start, no offsets are carried over between restarts:
+the notifications are volatile by design and only relevant to clients connected at that moment.
+As with any jEAP messaging participant, the service registers producer and consumer
+message contracts for the topic with the jEAP Message Contract Service.
+
+```mermaid
+flowchart LR
+   UI2["UI 2"]
+   UI1["UI 1"]
+
+    subgraph MSX["Microservice X"]
+        direction TB
+
+        subgraph I2["Instance 2"]
+            direction LR
+            MS2["Resource API<br/>+ SSE library"]
+            CG2(("consumer group 2"))
+            MS2 --- CG2
+        end
+
+        subgraph I1["Instance 1"]
+            direction LR
+            MS1["Resource API<br/>+ SSE library"]
+            CG1(("consumer group 1"))
+            MS1 --- CG1
+        end
+    end
+
+    CMD{{"NotifyClient Command"}}
+    MCS["jEAP Message Contract Service"]
+
+    UI2 -->|"1b GET SSE events"| MS2
+    UI1 -->|"1a GET SSE events"| MS1
+
+    UI2 -->|"2 delete resource"| MS2
+    MS2 -->|"3 Kafka event<br/>RESOURCE_DELETED"| CMD
+
+    CMD --> CG2
+    CMD --> CG1
+
+    MS2 -->|"4b SSE event<br/>RESOURCE_DELETED"| UI2
+    MS1 -->|"4a SSE event<br/>RESOURCE_DELETED"| UI1
+
+    MSX -->|"registerContracts"| MCS
+
+    classDef green fill:#b6d7a8,stroke:#333333,stroke-width:1px
+    classDef blue fill:#9fc5e8,stroke:#333333,stroke-width:1px
+    classDef white fill:#ffffff,stroke:#333333,stroke-width:1px
+
+    class UI1,UI2,MS1,MS2,MCS green
+    class CMD blue
+    class CG1,CG2 white
+
+    style MSX fill:#eeeeee,stroke:#999999,stroke-dasharray:5 5
+```
 
 ## The SSE endpoint
 

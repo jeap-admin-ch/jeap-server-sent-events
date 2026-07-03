@@ -62,6 +62,9 @@ from its own application → `NotifyClientResourceMutationDataSender` (web) writ
 When changing public behaviour, update the matching focused file under [docs/](docs/) (one topic per
 file) and the documentation index in the README.
 
+Validate that files under `docs/*.md` are valid MDX Markdown compatible with a Docusaurus site. Also
+validate that Mermaid diagrams in the Markdown files use correct Mermaid syntax.
+
 ## Versioning
 
 - Semantic Versioning; all changes documented in [CHANGELOG.md](./CHANGELOG.md) (Keep a Changelog format).
