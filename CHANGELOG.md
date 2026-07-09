@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [10.15.0] - 2026-07-09
+### Changed
+- update jeap-starter from 23.10.2 to 23.11.0
+- `jeap-spring-boot-swagger`: translate the actuator OpenAPI group's title and description from German to English ("Monitoring Endpunkte" → "Monitoring Endpoints")
+- Update documentation 
+
 ## [10.14.0] - 2026-07-07
 ### Changed
 - update jeap-messaging from 15.13.2 to 15.14.0
