@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [11.0.0] - 2026-07-17
+### Changed
+- update jeap-starter from 23.15.0 to 24.0.0
+- Provide the official WireMock Spring Boot integration without exposing WireMock's Jetty dependencies, replacing direct WireMock standalone dependencies across all modules.
+
 ## [10.20.0] - 2026-07-17
 ### Changed
 - update jeap-messaging from 15.19.0 to 15.20.0
