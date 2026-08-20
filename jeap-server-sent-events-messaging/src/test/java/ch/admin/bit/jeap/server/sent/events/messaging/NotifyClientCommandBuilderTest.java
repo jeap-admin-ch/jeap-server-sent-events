@@ -2,6 +2,8 @@ package ch.admin.bit.jeap.server.sent.events.messaging;
 
 import ch.admin.bit.jeap.command.notify.client.NotifyClientCommand;
 import ch.admin.bit.jeap.command.notify.client.NotifyClientCommandType;
+import ch.admin.bit.jeap.messaging.avro.security.AvroClassSecurity;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,6 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class NotifyClientCommandBuilderTest {
 
+    @BeforeAll
+    static void installAvroClassWhitelist() {
+        AvroClassSecurity.installDefaultIfMissing();
+    }
 
     @Test
     void buildNotifyClientCommand() {

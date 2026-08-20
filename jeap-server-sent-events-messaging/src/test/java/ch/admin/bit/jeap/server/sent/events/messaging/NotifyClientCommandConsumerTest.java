@@ -2,9 +2,11 @@ package ch.admin.bit.jeap.server.sent.events.messaging;
 
 import ch.admin.bit.jeap.command.notify.client.NotifyClientCommand;
 import ch.admin.bit.jeap.command.notify.client.NotifyClientCommandType;
+import ch.admin.bit.jeap.messaging.avro.security.AvroClassSecurity;
 import ch.admin.bit.jeap.server.sent.events.domain.ResourceMutationEvent;
 import ch.admin.bit.jeap.server.sent.events.domain.ResourceMutationEventHandler;
 import ch.admin.bit.jeap.server.sent.events.domain.ResourceMutationType;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,6 +20,11 @@ class NotifyClientCommandConsumerTest {
     private ResourceMutationEventHandler resourceMutationEventHandler;
 
     private NotifyClientCommandConsumer notifyClientCommandConsumer;
+
+    @BeforeAll
+    static void installAvroClassWhitelist() {
+        AvroClassSecurity.installDefaultIfMissing();
+    }
 
     @BeforeEach
     void setUp() {
