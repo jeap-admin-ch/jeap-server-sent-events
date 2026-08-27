@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [12.18.2] - 2026-08-27
+### Changed
+- update jeap-messaging from 18.2.1 to 18.2.2
+- update jeap-spring-boot-roles-anywhere-starter from 3.30.0 to 3.30.1
+
 ## [12.18.1] - 2026-08-26
 ### Changed
 - update jeap-starter from 24.20.0 to 24.20.1

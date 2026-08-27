@@ -27,7 +27,7 @@
 
     <artifactId>jeap-server-sent-events</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <version>12.18.1-SNAPSHOT</version>
+    <version>12.18.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -45,7 +45,7 @@
 
     <properties>
         <maven.javadoc.skip>false</maven.javadoc.skip>
-        <jeap-messaging.version>18.2.1</jeap-messaging.version>
+        <jeap-messaging.version>18.2.2</jeap-messaging.version>
         <jeap-starter.version>24.20.1</jeap-starter.version>
     </properties>
 
