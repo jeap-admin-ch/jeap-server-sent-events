@@ -76,9 +76,13 @@ public class NotifyClientController {
                 );
                 log.trace("Event '{}' sent successfully", name);
             } catch (IOException e) {
-                log.warn("Exception while sending event '{}' to client, removing emitter", name, e);
-                emitter.complete();
-                emitters.remove(emitter);
+                try {
+                    log.warn("Exception while sending event '{}' to client, removing emitter", name, e);
+                    emitter.complete();
+                    emitters.remove(emitter);
+                } catch (Exception exception) {
+                    log.warn("Exception while completing/removing emitter", exception);
+                }
             }
         }
     }
