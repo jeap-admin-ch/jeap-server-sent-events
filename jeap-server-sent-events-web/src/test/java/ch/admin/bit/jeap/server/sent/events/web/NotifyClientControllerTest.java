@@ -76,6 +76,29 @@ class NotifyClientControllerTest {
     }
 
     @Test
+    void sendEvent_whenExceptionInRemovesEmitter_ignoresException() throws Exception {
+        SseEmitter emitter = mock(SseEmitter.class);
+
+        controller = new NotifyClientController(TIMEOUT, Optional.empty()) {
+            @Override
+            SseEmitter createEmitter(long emitterTimeout) {
+                return emitter;
+            }
+        };
+
+        controller.streamEvents();
+
+        // simulate failure
+        doThrow(new IOException("boom")).when(emitter).send(any(Set.class));
+
+        // simulate failure in complete
+        doThrow(new RuntimeException("boom")).when(emitter).complete();
+
+        assertDoesNotThrow(() -> controller.sendEvent("test", "data"));
+
+      }
+
+    @Test
     void streamEvents_onCompletion_removesEmitter() throws IOException {
         SseEmitter emitter = mock(SseEmitter.class);
 
