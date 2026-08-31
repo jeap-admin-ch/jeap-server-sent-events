@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [12.22.0] - 2026-08-31
+
+### Changed
+- Update parent from 9.0.3 to 9.2.0
+- update jeap-starter from 24.23.0 to 24.24.0
+- update jeap-messaging from 18.4.0 to 18.5.0
+- update jeap-spring-boot-roles-anywhere-starter from 3.32.0 to 3.34.0
+- update jeap-crypto from 10.20.0 to 10.22.0
+- update jeap-spring-boot-vault-starter from 24.22.0 to 24.24.0
+- Exclude both AWS SDK Apache HTTP clients when using the URL connection client.
+
 ## [12.21.0] - 2026-08-28
 
 ### Changed
