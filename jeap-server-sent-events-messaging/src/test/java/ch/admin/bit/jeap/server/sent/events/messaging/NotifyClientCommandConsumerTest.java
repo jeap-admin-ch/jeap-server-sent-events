@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.kafka.support.Acknowledgment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -40,9 +39,8 @@ class NotifyClientCommandConsumerTest {
         String resourcePath = "/test/resource";
         NotifyClientCommandType type = NotifyClientCommandType.RESOURCE_CREATED;
         NotifyClientCommand command = NotifyClientCommandBuilder.buildCommand(systemName, serviceName, resourcePath, type, null);
-        Acknowledgment acknowledgment = mock(Acknowledgment.class);
 
-        notifyClientCommandConsumer.consume(command, acknowledgment);
+        notifyClientCommandConsumer.consume(command);
 
         ArgumentCaptor<ResourceMutationEvent> captor = ArgumentCaptor.forClass(ResourceMutationEvent.class);
         verify(resourceMutationEventHandler).resourceMutation(captor.capture());
@@ -51,7 +49,6 @@ class NotifyClientCommandConsumerTest {
         assertEquals(serviceName, value.sendingApplication());
         assertEquals(resourcePath, value.resourcePath());
         assertEquals(ResourceMutationType.RESOURCE_CREATED, value.type());
-        verify(acknowledgment).acknowledge();
     }
 
     @Test
@@ -61,13 +58,11 @@ class NotifyClientCommandConsumerTest {
         String resourcePath = "/test/resource";
         NotifyClientCommandType type = NotifyClientCommandType.RESOURCE_UPDATED;
         NotifyClientCommand command = NotifyClientCommandBuilder.buildCommand(systemName, serviceName, resourcePath, type, null);
-        Acknowledgment acknowledgment = mock(Acknowledgment.class);
 
-        notifyClientCommandConsumer.consume(command, acknowledgment);
+        notifyClientCommandConsumer.consume(command);
 
         ArgumentCaptor<ResourceMutationEvent> captor = ArgumentCaptor.forClass(ResourceMutationEvent.class);
         verify(resourceMutationEventHandler).resourceMutation(captor.capture());
-        verify(acknowledgment).acknowledge();
 
         ResourceMutationEvent value = captor.getValue();
         assertEquals(serviceName, value.sendingApplication());
@@ -82,13 +77,11 @@ class NotifyClientCommandConsumerTest {
         String resourcePath = "/test/resource";
         NotifyClientCommandType type = NotifyClientCommandType.RESOURCE_DELETED;
         NotifyClientCommand command = NotifyClientCommandBuilder.buildCommand(systemName, serviceName, resourcePath, type, null);
-        Acknowledgment acknowledgment = mock(Acknowledgment.class);
 
-        notifyClientCommandConsumer.consume(command, acknowledgment);
+        notifyClientCommandConsumer.consume(command);
 
         ArgumentCaptor<ResourceMutationEvent> captor = ArgumentCaptor.forClass(ResourceMutationEvent.class);
         verify(resourceMutationEventHandler).resourceMutation(captor.capture());
-        verify(acknowledgment).acknowledge();
 
         ResourceMutationEvent value = captor.getValue();
         assertEquals(serviceName, value.sendingApplication());

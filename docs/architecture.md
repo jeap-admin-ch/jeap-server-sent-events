@@ -40,8 +40,8 @@ Step by step:
    only listener is `NotifyClientCommandProducer`.
 2. **To Kafka.** The producer builds a `NotifyClientCommand` (Avro) tagged with the sending
    application name and the `resourcePath`, and sends it **synchronously** to `jeap.sse.kafka.topic`.
-3. **Consume on every instance.** Each instance runs a `NotifyClientCommandConsumer` with a unique
-   listener id (`${spring.application.name}-${random.uuid}`), so all instances receive the command.
+3. **Consume on every instance.** Each instance explicitly assigns its `NotifyClientCommandConsumer`
+   to every partition of the topic without joining a consumer group, so all instances receive the command.
 4. **Filter.** `ResourceMutationEventHandler` drops commands whose `sendingApplication` differs from
    the instance's own `spring.application.name` — only an application notifies its own clients.
 5. **Push.** `NotifyClientResourceMutationDataSender` (a `ResourceMutationEventListener`) serializes
@@ -56,12 +56,13 @@ be processed on any other. The diagram below shows how the Kafka topic bridges t
 connected to instance 1, UI 2 to instance 2, and a resource deletion handled by instance 2 still
 reaches both clients.
 
-Every instance subscribes to the topic with its **own consumer group** (the listener id is
-`${spring.application.name}-${random.uuid}`), so the `NotifyClientCommand` is not load-balanced
-across instances but delivered to *all* of them. Each instance then forwards the event to the
-clients connected to it — no instance needs to know where the other clients are attached. Because
-the consumer group id is regenerated on every start, no offsets are carried over between restarts:
-the notifications are volatile by design and only relevant to clients connected at that moment.
+Every instance explicitly consumes **all topic partitions without a consumer group**, so the
+`NotifyClientCommand` is not load-balanced across instances but delivered to *all* of them. Each
+instance then forwards the event to the clients connected to it — no instance needs to know where
+the other clients are attached. The listener seeks each assigned partition to its end on startup and
+does not commit offsets, so notifications are volatile by design and only relevant to clients
+connected at that moment. Partition assignment is resolved at listener startup; if partitions are
+added to the topic later, the listener or application must be restarted to consume them.
 As with any jEAP messaging participant, the service registers producer and consumer
 message contracts for the topic with the jEAP Message Contract Service.
 
@@ -76,15 +77,15 @@ flowchart LR
         subgraph I2["Instance 2"]
             direction LR
             MS2["Resource API<br/>+ SSE library"]
-            CG2(("consumer group 2"))
-            MS2 --- CG2
+            KA2(("all Kafka partitions"))
+            MS2 --- KA2
         end
 
         subgraph I1["Instance 1"]
             direction LR
             MS1["Resource API<br/>+ SSE library"]
-            CG1(("consumer group 1"))
-            MS1 --- CG1
+            KA1(("all Kafka partitions"))
+            MS1 --- KA1
         end
     end
 
@@ -97,8 +98,8 @@ flowchart LR
     UI2 -->|"2 delete resource"| MS2
     MS2 -->|"3 Kafka event<br/>RESOURCE_DELETED"| CMD
 
-    CMD --> CG2
-    CMD --> CG1
+    CMD --> KA2
+    CMD --> KA1
 
     MS2 -->|"4b SSE event<br/>RESOURCE_DELETED"| UI2
     MS1 -->|"4a SSE event<br/>RESOURCE_DELETED"| UI1
@@ -111,7 +112,7 @@ flowchart LR
 
     class UI1,UI2,MS1,MS2,MCS green
     class CMD blue
-    class CG1,CG2 white
+    class KA1,KA2 white
 
     style MSX fill:#eeeeee,stroke:#999999,stroke-dasharray:5 5
 ```

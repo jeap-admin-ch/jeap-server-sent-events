@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 @SpringBootTest(classes = TestApp.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("secured-simple")
 @Import(JeapOAuth2IntegrationTestResourceConfiguration.class)
+@EmbeddedKafka(partitions = 1, topics = "jeap-testapp-notifyclient")
 class ServerSentEventsEnabledSecuredSimpleIT extends KafkaIntegrationTestBase {
 
     private static final String SIMPLE_AUTH_READ_ROLE = "authentication:read";

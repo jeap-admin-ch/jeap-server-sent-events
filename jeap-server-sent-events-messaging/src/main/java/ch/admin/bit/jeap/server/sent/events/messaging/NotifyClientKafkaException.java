@@ -9,4 +9,8 @@ public class NotifyClientKafkaException extends RuntimeException {
     public static NotifyClientKafkaException producingCommandFailed(Exception cause) {
         return new NotifyClientKafkaException("Failed to produce event", cause);
     }
+
+    public static NotifyClientKafkaException resolvingPartitionsFailed(String topic, Exception cause) {
+        return new NotifyClientKafkaException("Failed to resolve partitions for topic " + topic, cause);
+    }
 }
