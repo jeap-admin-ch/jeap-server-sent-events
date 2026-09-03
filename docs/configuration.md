@@ -6,10 +6,11 @@ from `jeap-sse-defaults.properties` in the starter.
 
 ## Core
 
-| Name                   | Default | Description                                                                                                        |
-|------------------------|---------|--------------------------------------------------------------------------------------------------------------------|
-| `jeap.sse.enabled`     | `true`  | Enable or disable the whole SSE support (endpoint, heartbeat and Kafka producer/consumer)                          |
-| `jeap.sse.kafka.topic` | —       | Kafka topic the library publishes and consumes on. Convention: `<system>-<applicationname>-notifyclient`. Required |
+| Name                                            | Default | Description                                                                                                        |
+|-------------------------------------------------|---------|--------------------------------------------------------------------------------------------------------------------|
+| `jeap.sse.enabled`                              | `true`  | Enable or disable the whole SSE support (endpoint, heartbeat and Kafka producer/consumer)                          |
+| `jeap.sse.kafka.topic`                          | —       | Kafka topic the library publishes and consumes on. Convention: `<system>-<applicationname>-notifyclient`. Required |
+| `jeap.sse.kafka.partitionRefreshRateInMs`       | `30000` | Interval in milliseconds for discovering Kafka partitions added at runtime                                        |
 
 ## Web endpoint
 

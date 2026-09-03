@@ -10,9 +10,11 @@ import ch.admin.bit.jeap.server.sent.events.messaging.NotifyClientCommandConsume
 import ch.admin.bit.jeap.server.sent.events.messaging.NotifyClientCommandProducer;
 import ch.admin.bit.jeap.server.sent.events.messaging.NotifyClientContractsValidator;
 import ch.admin.bit.jeap.server.sent.events.messaging.NotifyClientPartitionFinder;
+import ch.admin.bit.jeap.server.sent.events.messaging.NotifyClientPartitionMonitor;
 import ch.admin.bit.jeap.server.sent.events.messaging.NotifyClientTopicValidator;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -22,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.ContainerCustomizer;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
@@ -64,6 +67,21 @@ public class MessagingResourceMutationAutoConfiguration {
     @Bean
     public NotifyClientPartitionFinder notifyClientPartitionFinder(KafkaAdmin kafkaAdmin) {
         return new NotifyClientPartitionFinder(kafkaAdmin);
+    }
+
+    @Bean
+    public NotifyClientPartitionMonitor notifyClientPartitionMonitor(
+            @Value("${spring.application.name}") String applicationName,
+            @Value("${jeap.sse.kafka.topic}") String topic,
+            @Value("${jeap.sse.kafka.partitionRefreshRateInMs:30000}") long refreshRateInMs,
+            NotifyClientPartitionFinder partitionFinder,
+            NotifyClientCommandConsumer commandConsumer,
+            ErrorHandlingTargetFilter errorHandlingTargetFilter,
+            KafkaListenerEndpointRegistry listenerEndpointRegistry,
+            @Qualifier("notifyClientKafkaListenerContainerFactory")
+            ConcurrentKafkaListenerContainerFactory<Object, Object> notifyClientKafkaListenerContainerFactory) {
+        return new NotifyClientPartitionMonitor(applicationName, topic, refreshRateInMs, partitionFinder, commandConsumer,
+                listenerEndpointRegistry, notifyClientKafkaListenerContainerFactory, errorHandlingTargetFilter);
     }
 
     @Bean

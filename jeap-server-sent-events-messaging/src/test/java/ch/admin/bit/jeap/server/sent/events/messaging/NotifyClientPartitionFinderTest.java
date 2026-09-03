@@ -1,10 +1,12 @@
 package ch.admin.bit.jeap.server.sent.events.messaging;
 
+import org.apache.kafka.clients.admin.Admin;
+import org.apache.kafka.clients.admin.DescribeTopicsResult;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.TopicPartitionInfo;
+import org.apache.kafka.common.KafkaFuture;
 import org.junit.jupiter.api.Test;
 import org.springframework.kafka.KafkaException;
-import org.springframework.kafka.core.KafkaAdmin;
 
 import java.util.List;
 import java.util.Map;
@@ -18,27 +20,30 @@ class NotifyClientPartitionFinderTest {
 
     @Test
     void resolvesAllTopicPartitions() {
-        KafkaAdmin kafkaAdmin = mock(KafkaAdmin.class);
+        Admin admin = mock(Admin.class);
+        DescribeTopicsResult describeTopicsResult = mock(DescribeTopicsResult.class);
         TopicDescription topicDescription = mock(TopicDescription.class);
         TopicPartitionInfo partitionZero = mock(TopicPartitionInfo.class);
         TopicPartitionInfo partitionTwo = mock(TopicPartitionInfo.class);
         when(partitionZero.partition()).thenReturn(0);
         when(partitionTwo.partition()).thenReturn(2);
         when(topicDescription.partitions()).thenReturn(List.of(partitionZero, partitionTwo));
-        when(kafkaAdmin.describeTopics("notify-client")).thenReturn(Map.of("notify-client", topicDescription));
+        when(describeTopicsResult.allTopicNames())
+                .thenReturn(KafkaFuture.completedFuture(Map.of("notify-client", topicDescription)));
+        when(admin.describeTopics(List.of("notify-client"))).thenReturn(describeTopicsResult);
 
-        String[] partitions = new NotifyClientPartitionFinder(kafkaAdmin).partitions("notify-client");
+        String[] partitions = new NotifyClientPartitionFinder(admin).partitions("notify-client");
 
         assertThat(partitions).containsExactly("0", "2");
     }
 
     @Test
     void wrapsPartitionResolutionFailure() {
-        KafkaAdmin kafkaAdmin = mock(KafkaAdmin.class);
+        Admin admin = mock(Admin.class);
         KafkaException cause = new KafkaException("broker unavailable");
-        when(kafkaAdmin.describeTopics("notify-client")).thenThrow(cause);
+        when(admin.describeTopics(List.of("notify-client"))).thenThrow(cause);
 
-        assertThatThrownBy(() -> new NotifyClientPartitionFinder(kafkaAdmin).partitions("notify-client"))
+        assertThatThrownBy(() -> new NotifyClientPartitionFinder(admin).partitions("notify-client"))
                 .isInstanceOf(NotifyClientKafkaException.class)
                 .hasMessage("Failed to resolve partitions for topic notify-client")
                 .hasCause(cause);
