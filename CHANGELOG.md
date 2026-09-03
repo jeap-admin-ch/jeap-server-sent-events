@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [12.26.1] - 2026-09-04
+
+### Changed
+
+- Consume SSE notification commands from all Kafka partitions, including partitions added at runtime, without creating
+  consumer groups or committing offsets.
+
 ## [12.26.0] - 2026-09-03
 ### Changed
 - update jeap-starter from 24.27.0 to 24.28.0
@@ -26,8 +33,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - update jeap-spring-boot-roles-anywhere-starter from 3.35.0 to 3.36.0
 - update jeap-crypto from 10.24.0 to 10.25.0
 - update jeap-spring-boot-vault-starter from 24.26.0 to 24.27.0
-- Consume SSE notification commands from all Kafka partitions, including partitions added at runtime, without creating
-  consumer groups or committing offsets.
 
 ## [12.24.0] - 2026-09-02
 ### Changed
