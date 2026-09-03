@@ -114,20 +114,27 @@ class ServerSentEventsMessagingIT extends KafkaIntegrationTestBase {
 
     @Test
     void consumesPartitionsAddedAtRuntimeWithoutAConsumerGroup() throws Exception {
-        try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
-            adminClient.createPartitions(Map.of("jeap-testapp-notifyclient", NewPartitions.increaseTo(2)))
-                    .all().get();
+        notifyClientPartitionMonitor.refreshPartitions();
+        notifyClientPartitionMonitor.stop();
+        try {
+            try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+                adminClient.createPartitions(Map.of("jeap-testapp-notifyclient", NewPartitions.increaseTo(2)))
+                        .all().get();
+            }
+
+            NotifyClientCommand command = NotifyClientCommandBuilder.buildCommand(
+                    "test-system", "testapp", "/new-partition", NotifyClientCommandType.RESOURCE_CREATED, null);
+            kafkaTemplate.send("jeap-testapp-notifyclient", 1, null, command).get();
+        } finally {
+            notifyClientPartitionMonitor.start();
         }
+
         long deadline = System.currentTimeMillis() + 10000;
         while (!notifyClientPartitionMonitor.consumesPartitionWithoutGroup(1)
                 && System.currentTimeMillis() < deadline) {
             Thread.sleep(50);
         }
         assertThat(notifyClientPartitionMonitor.consumesPartitionWithoutGroup(1)).isTrue();
-
-        NotifyClientCommand command = NotifyClientCommandBuilder.buildCommand(
-                "test-system", "testapp", "/new-partition", NotifyClientCommandType.RESOURCE_CREATED, null);
-        kafkaTemplate.send("jeap-testapp-notifyclient", 1, null, command).get();
 
         verify(resourceMutationEventHandler, timeout(10000)).resourceMutation(argThat(event ->
                 event.resourcePath().equals("/new-partition")));

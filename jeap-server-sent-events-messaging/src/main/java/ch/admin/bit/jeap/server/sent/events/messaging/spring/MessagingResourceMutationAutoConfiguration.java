@@ -94,6 +94,7 @@ public class MessagingResourceMutationAutoConfiguration {
             ObjectProvider<ContainerCustomizer> containerCustomizer,
             BeanFactory beanFactory) {
 
+        // A group would load-balance notifications, but every SSE instance must consume every explicitly assigned partition.
         Map<String, Object> consumerProperties = new HashMap<>(consumerFactory.getConfigurationProperties());
         consumerProperties.remove(ConsumerConfig.GROUP_ID_CONFIG);
         consumerProperties.remove(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG);
@@ -101,6 +102,7 @@ public class MessagingResourceMutationAutoConfiguration {
 
         DefaultKafkaConsumerFactory<Object, Object> grouplessConsumerFactory =
                 new DefaultKafkaConsumerFactory<>(consumerProperties);
+        // Preserve application-wide instrumentation attached to the standard consumer factory.
         consumerFactory.getListeners().forEach(grouplessConsumerFactory::addListener);
         consumerFactory.getPostProcessors().forEach(grouplessConsumerFactory::addPostProcessor);
 
@@ -108,9 +110,11 @@ public class MessagingResourceMutationAutoConfiguration {
                 new ConcurrentKafkaListenerContainerFactory<>();
         configurer.configure(factory, grouplessConsumerFactory);
         factory.setConcurrency(1);
+        // Prevent assignment and transaction handling from committing offsets for this intentionally volatile stream.
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         factory.getContainerProperties().setAssignmentCommitOption(ContainerProperties.AssignmentCommitOption.NEVER);
         factory.getContainerProperties().setKafkaAwareTransactionManager(null);
+        // Boot's configurer does not copy application-specific hooks from the standard listener factory.
         ConcurrentKafkaListenerContainerFactory kafkaListenerContainerFactory = beanFactory.getBean(
                 "kafkaListenerContainerFactory", ConcurrentKafkaListenerContainerFactory.class);
         factory.getContainerProperties().setObservationEnabled(

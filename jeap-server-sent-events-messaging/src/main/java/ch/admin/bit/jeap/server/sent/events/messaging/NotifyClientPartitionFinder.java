@@ -17,6 +17,7 @@ public class NotifyClientPartitionFinder implements AutoCloseable {
     private final Admin admin;
 
     public NotifyClientPartitionFinder(KafkaAdmin kafkaAdmin) {
+        // The monitor polls throughout the application lifetime, so reuse one client instead of reconnecting every time.
         this(Admin.create(kafkaAdmin.getConfigurationProperties()));
     }
 
@@ -25,8 +26,7 @@ public class NotifyClientPartitionFinder implements AutoCloseable {
     }
 
     /**
-     * Resolves the current partitions when the listener is initialized. Partitions added later are picked up after a
-     * listener or application restart.
+     * Resolves the current partitions for the initial listener assignment and subsequent monitor refreshes.
      */
     public String[] partitions(String topic) {
         try {
@@ -37,7 +37,7 @@ public class NotifyClientPartitionFinder implements AutoCloseable {
                     .map(info -> Integer.toString(info.partition()))
                     .toArray(String[]::new);
 
-            log.info("Assigning SSE consumer to partitions {} of topic {}", Arrays.toString(partitions), topic);
+            log.debug("Assigning SSE consumer to partitions {} of topic {}", Arrays.toString(partitions), topic);
             return partitions;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

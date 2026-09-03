@@ -22,6 +22,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Adds consumers for existing and newly created partitions beyond partition 0, because Kafka does not expand an
+ * explicit assignment at runtime. Discovery runs asynchronously so Kafka availability does not block bean creation.
+ */
 @RequiredArgsConstructor
 @Slf4j
 public class NotifyClientPartitionMonitor implements SmartLifecycle {
@@ -41,6 +45,7 @@ public class NotifyClientPartitionMonitor implements SmartLifecycle {
 
     private volatile ScheduledExecutorService scheduler;
     private volatile boolean running;
+    private boolean initialPartitionsResolved;
 
     @Override
     public synchronized void start() {
@@ -54,7 +59,7 @@ public class NotifyClientPartitionMonitor implements SmartLifecycle {
             return thread;
         });
         scheduler.scheduleWithFixedDelay(this::refreshPartitionsSafely,
-                refreshRateInMs, refreshRateInMs, TimeUnit.MILLISECONDS);
+                0, refreshRateInMs, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -79,6 +84,7 @@ public class NotifyClientPartitionMonitor implements SmartLifecycle {
 
     @Override
     public int getPhase() {
+        // The primary annotated listener must exist before monitoring starts, while this monitor should stop first.
         return Integer.MAX_VALUE;
     }
 
@@ -94,11 +100,15 @@ public class NotifyClientPartitionMonitor implements SmartLifecycle {
                 .collect(Collectors.toSet());
         consumedPartitions.addAll(additionalContainers.keySet());
 
+        TopicPartitionOffset.SeekPosition seekPosition = initialPartitionsResolved
+                ? TopicPartitionOffset.SeekPosition.BEGINNING
+                : TopicPartitionOffset.SeekPosition.END;
         Arrays.stream(partitionFinder.partitions(topic))
                 .map(Integer::parseInt)
                 .filter(partition -> !consumedPartitions.contains(partition))
                 .sorted()
-                .forEach(this::startAdditionalContainer);
+                .forEach(partition -> startAdditionalContainer(partition, seekPosition));
+        initialPartitionsResolved = true;
     }
 
     boolean consumesPartitionWithoutGroup(int partition) {
@@ -106,20 +116,20 @@ public class NotifyClientPartitionMonitor implements SmartLifecycle {
         return container != null && container.getGroupId() == null;
     }
 
-    private void startAdditionalContainer(int partition) {
-        TopicPartitionOffset assignment =
-                new TopicPartitionOffset(topic, partition, TopicPartitionOffset.SeekPosition.END);
+    private void startAdditionalContainer(int partition, TopicPartitionOffset.SeekPosition seekPosition) {
+        TopicPartitionOffset assignment = new TopicPartitionOffset(topic, partition, seekPosition);
         ConcurrentMessageListenerContainer<Object, Object> container = containerFactory.createContainer(assignment);
         container.setBeanName(listenerId() + "-partition-" + partition);
         container.getContainerProperties().setGroupId(null);
         MessageListener<Object, Object> listener = record ->
                 commandConsumer.consume((NotifyClientCommand) record.value());
+        // Programmatic containers bypass @KafkaListener adapter creation and must apply the same target filter explicitly.
         container.setupMessageListener(new FilteringMessageListenerAdapter<>(listener, recordFilterStrategy, false));
 
         try {
             container.start();
             additionalContainers.put(partition, container);
-            log.info("Started SSE consumer for newly added partition {} of topic {}", partition, topic);
+            log.info("Started SSE consumer for partition {} of topic {} at {}", partition, topic, seekPosition);
         } catch (RuntimeException e) {
             container.destroy();
             throw e;

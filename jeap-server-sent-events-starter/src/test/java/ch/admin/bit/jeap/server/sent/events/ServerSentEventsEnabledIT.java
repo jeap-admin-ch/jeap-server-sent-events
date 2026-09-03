@@ -10,13 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Map;
 
 @SpringBootTest(classes = TestApp.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "jeap.sse.web.insecure.enabled=true")
-@EmbeddedKafka(partitions = 1, topics = "jeap-testapp-notifyclient")
 class ServerSentEventsEnabledIT extends KafkaIntegrationTestBase {
 
     @LocalServerPort

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Map;
@@ -17,7 +16,6 @@ import java.util.Map;
                 "jeap.sse.web.heartbeat.rateInMs=200",
                 "jeap.sse.web.insecure.enabled=true"
         })
-@EmbeddedKafka(partitions = 1, topics = "jeap-testapp-notifyclient")
 class ServerSentEventsHearbeatIT extends KafkaIntegrationTestBase {
 
     @LocalServerPort

@@ -17,6 +17,7 @@ public class NotifyClientCommandConsumer {
 
     private final ResourceMutationEventHandler resourceMutationEventHandler;
 
+    // Partition 0 starts without querying Kafka; the monitor assigns all other partitions.
     @KafkaListener(
             id = "${spring.application.name}-sse-notify-client",
             idIsGroup = false,
@@ -25,7 +26,7 @@ public class NotifyClientCommandConsumer {
             topicPartitions = @TopicPartition(
                     topic = "${jeap.sse.kafka.topic}",
                     partitionOffsets = @PartitionOffset(
-                            partition = "#{@notifyClientPartitionFinder.partitions('${jeap.sse.kafka.topic}')}",
+                            partition = "0",
                             initialOffset = "0",
                             seekPosition = "END")))
     public void consume(NotifyClientCommand notifyClientCommand) {

@@ -59,10 +59,12 @@ reaches both clients.
 Every instance explicitly consumes **all topic partitions without a consumer group**, so the
 `NotifyClientCommand` is not load-balanced across instances but delivered to *all* of them. Each
 instance then forwards the event to the clients connected to it — no instance needs to know where
-the other clients are attached. The listener seeks each assigned partition to its end and does not
-commit offsets, so notifications are volatile by design and only relevant to clients connected at
-that moment. A partition monitor periodically discovers partitions added at runtime and starts an
-additional groupless consumer for each one without interrupting consumption from existing partitions.
+the other clients are attached. On application startup, the listener seeks each existing partition to
+its end and does not commit offsets, so retained notifications are not replayed. A partition monitor
+periodically discovers partitions added at runtime and starts an additional groupless consumer for
+each one without interrupting existing partitions. These new partitions are consumed from their
+beginning because they were empty when created, preventing loss of notifications published before
+the monitor discovered them.
 As with any jEAP messaging participant, the service registers producer and consumer
 message contracts for the topic with the jEAP Message Contract Service.
 

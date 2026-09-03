@@ -40,7 +40,7 @@ class NotifyClientPartitionMonitorTest {
             new ContainerProperties(new TopicPartitionOffset("notify-client", 1));
 
     @Test
-    void startsAConsumerForANewPartitionAtTheEnd() {
+    void startsAConsumerForAnExistingPartitionAtTheEnd() {
         NotifyClientPartitionMonitor monitor = createMonitor();
         givenPrimaryPartition(0);
         when(partitionFinder.partitions("notify-client")).thenReturn(new String[]{"0", "1"});
@@ -56,6 +56,27 @@ class NotifyClientPartitionMonitorTest {
             assertThat(assignment.getPartition()).isEqualTo(1);
             assertThat(assignment.getPosition()).isEqualTo(TopicPartitionOffset.SeekPosition.END);
         });
+    }
+
+    @Test
+    void startsAConsumerForANewPartitionAtTheBeginning() {
+        NotifyClientPartitionMonitor monitor = createMonitor();
+        givenPrimaryPartition(0);
+        when(partitionFinder.partitions("notify-client"))
+                .thenReturn(new String[]{"0"}, new String[]{"0", "1"});
+        when(containerFactory.createContainer(any(TopicPartitionOffset[].class))).thenReturn(additionalContainer);
+        when(additionalContainer.getContainerProperties()).thenReturn(additionalContainerProperties);
+
+        monitor.refreshPartitions();
+        monitor.refreshPartitions();
+
+        ArgumentCaptor<TopicPartitionOffset[]> assignments = ArgumentCaptor.forClass(TopicPartitionOffset[].class);
+        verify(containerFactory).createContainer(assignments.capture());
+        assertThat(assignments.getValue()).singleElement().satisfies(assignment -> {
+            assertThat(assignment.getTopic()).isEqualTo("notify-client");
+            assertThat(assignment.getPartition()).isEqualTo(1);
+            assertThat(assignment.getPosition()).isEqualTo(TopicPartitionOffset.SeekPosition.BEGINNING);
+        });
         verify(additionalContainer).setBeanName("testapp-sse-notify-client-partition-1");
         assertThat(additionalContainerProperties.getGroupId()).isNull();
         verify(additionalContainer).start();
@@ -68,10 +89,12 @@ class NotifyClientPartitionMonitorTest {
     void delegatesRecordsFromANewPartitionToTheCommandConsumer() {
         NotifyClientPartitionMonitor monitor = createMonitor();
         givenPrimaryPartition(0);
-        when(partitionFinder.partitions("notify-client")).thenReturn(new String[]{"0", "1"});
+        when(partitionFinder.partitions("notify-client"))
+                .thenReturn(new String[]{"0"}, new String[]{"0", "1"});
         when(containerFactory.createContainer(any(TopicPartitionOffset[].class))).thenReturn(additionalContainer);
         when(additionalContainer.getContainerProperties()).thenReturn(additionalContainerProperties);
 
+        monitor.refreshPartitions();
         monitor.refreshPartitions();
 
         ArgumentCaptor<Object> listenerCaptor = ArgumentCaptor.forClass(Object.class);
