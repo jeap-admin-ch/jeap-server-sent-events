@@ -42,8 +42,9 @@ class NotifyClientPartitionFinderTest {
         Admin admin = mock(Admin.class);
         KafkaException cause = new KafkaException("broker unavailable");
         when(admin.describeTopics(List.of("notify-client"))).thenThrow(cause);
+        NotifyClientPartitionFinder partitionFinder = new NotifyClientPartitionFinder(admin);
 
-        assertThatThrownBy(() -> new NotifyClientPartitionFinder(admin).partitions("notify-client"))
+        assertThatThrownBy(() -> partitionFinder.partitions("notify-client"))
                 .isInstanceOf(NotifyClientKafkaException.class)
                 .hasMessage("Failed to resolve partitions for topic notify-client")
                 .hasCause(cause);

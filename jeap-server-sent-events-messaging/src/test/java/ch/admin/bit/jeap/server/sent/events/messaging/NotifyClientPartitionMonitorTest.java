@@ -102,9 +102,9 @@ class NotifyClientPartitionMonitorTest {
         assertThat(listenerCaptor.getValue()).isInstanceOf(FilteringMessageListenerAdapter.class);
         MessageListener<Object, Object> listener = (MessageListener<Object, Object>) listenerCaptor.getValue();
         NotifyClientCommand command = mock(NotifyClientCommand.class);
-        ConsumerRecord<Object, Object> record = new ConsumerRecord<>("notify-client", 1, 0, null, command);
-        listener.onMessage(record);
-        verify(recordFilterStrategy).filter(record);
+        ConsumerRecord<Object, Object> consumerRecord = new ConsumerRecord<>("notify-client", 1, 0, null, command);
+        listener.onMessage(consumerRecord);
+        verify(recordFilterStrategy).filter(consumerRecord);
         verify(commandConsumer).consume(command);
     }
 

@@ -43,7 +43,7 @@ public class NotifyClientPartitionMonitor implements SmartLifecycle {
     private final Map<Integer, ConcurrentMessageListenerContainer<Object, Object>> additionalContainers =
             new ConcurrentHashMap<>();
 
-    private volatile ScheduledExecutorService scheduler;
+    private ScheduledExecutorService scheduler;
     private volatile boolean running;
     private boolean initialPartitionsResolved;
 
@@ -121,8 +121,8 @@ public class NotifyClientPartitionMonitor implements SmartLifecycle {
         ConcurrentMessageListenerContainer<Object, Object> container = containerFactory.createContainer(assignment);
         container.setBeanName(listenerId() + "-partition-" + partition);
         container.getContainerProperties().setGroupId(null);
-        MessageListener<Object, Object> listener = record ->
-                commandConsumer.consume((NotifyClientCommand) record.value());
+        MessageListener<Object, Object> listener = consumerRecord ->
+                commandConsumer.consume((NotifyClientCommand) consumerRecord.value());
         // Programmatic containers bypass @KafkaListener adapter creation and must apply the same target filter explicitly.
         container.setupMessageListener(new FilteringMessageListenerAdapter<>(listener, recordFilterStrategy, false));
 

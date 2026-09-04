@@ -29,8 +29,8 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.listener.RecordInterceptor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -115,16 +115,19 @@ public class MessagingResourceMutationAutoConfiguration {
         factory.getContainerProperties().setAssignmentCommitOption(ContainerProperties.AssignmentCommitOption.NEVER);
         factory.getContainerProperties().setKafkaAwareTransactionManager(null);
         // Boot's configurer does not copy application-specific hooks from the standard listener factory.
-        ConcurrentKafkaListenerContainerFactory kafkaListenerContainerFactory = beanFactory.getBean(
+        ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerContainerFactory = beanFactory.getBean(
                 "kafkaListenerContainerFactory", ConcurrentKafkaListenerContainerFactory.class);
         factory.getContainerProperties().setObservationEnabled(
                 kafkaListenerContainerFactory.getContainerProperties().isObservationEnabled());
-        factory.setRecordInterceptor(kafkaListenerContainerFactory.getRecordInterceptor());
+        RecordInterceptor<Object, Object> recordInterceptor = kafkaListenerContainerFactory.getRecordInterceptor();
+        if (recordInterceptor != null) {
+            factory.setRecordInterceptor(recordInterceptor);
+        }
         factory.setRecordFilterStrategy(errorHandlingTargetFilter);
         factory.setAckDiscarded(false);
         factory.setContainerCustomizer(container -> {
             containerCustomizer.ifAvailable(customizer -> customizer.configure(container));
-            ((ConcurrentMessageListenerContainer<Object, Object>) container).setKafkaAdmin(kafkaAdmin);
+            container.setKafkaAdmin(kafkaAdmin);
         });
         return factory;
     }

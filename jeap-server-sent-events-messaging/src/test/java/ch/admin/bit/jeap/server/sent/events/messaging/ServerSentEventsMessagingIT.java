@@ -7,6 +7,7 @@ import ch.admin.bit.jeap.messaging.avro.AvroMessageKey;
 import ch.admin.bit.jeap.messaging.kafka.test.KafkaIntegrationTestBase;
 import ch.admin.bit.jeap.server.sent.events.domain.ResourceMutationEventHandler;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.GroupListing;
 import org.apache.kafka.clients.admin.NewPartitions;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
@@ -26,11 +27,13 @@ import org.springframework.kafka.support.TopicPartitionOffset;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.timeout;
@@ -106,7 +109,7 @@ class ServerSentEventsMessagingIT extends KafkaIntegrationTestBase {
 
         try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             Set<String> groupIds = adminClient.listGroups().all().get().stream()
-                    .map(group -> group.groupId())
+                    .map(GroupListing::groupId)
                     .collect(Collectors.toSet());
             assertThat(groupIds).noneMatch(groupId -> groupId.startsWith("testapp-"));
         }
@@ -129,19 +132,15 @@ class ServerSentEventsMessagingIT extends KafkaIntegrationTestBase {
             notifyClientPartitionMonitor.start();
         }
 
-        long deadline = System.currentTimeMillis() + 10000;
-        while (!notifyClientPartitionMonitor.consumesPartitionWithoutGroup(1)
-                && System.currentTimeMillis() < deadline) {
-            Thread.sleep(50);
-        }
-        assertThat(notifyClientPartitionMonitor.consumesPartitionWithoutGroup(1)).isTrue();
+        await().atMost(Duration.ofSeconds(10))
+                .until(() -> notifyClientPartitionMonitor.consumesPartitionWithoutGroup(1));
 
         verify(resourceMutationEventHandler, timeout(10000)).resourceMutation(argThat(event ->
                 event.resourcePath().equals("/new-partition")));
 
         try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
             Set<String> groupIds = adminClient.listGroups().all().get().stream()
-                    .map(group -> group.groupId())
+                    .map(GroupListing::groupId)
                     .collect(Collectors.toSet());
             assertThat(groupIds).noneMatch(groupId -> groupId.startsWith("testapp-"));
         }
